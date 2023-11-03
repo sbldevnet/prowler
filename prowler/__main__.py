@@ -233,9 +233,10 @@ def prowler():
 
     # AWS Security Hub Integration
     if provider == "aws" and args.security_hub:
-        print(
-            f"{Style.BRIGHT}\nSending findings to AWS Security Hub, please wait...{Style.RESET_ALL}"
-        )
+        if not args.only_logs:
+            print(
+                f"{Style.BRIGHT}\nSending findings to AWS Security Hub, please wait...{Style.RESET_ALL}"
+            )
         # Verify where AWS Security Hub is enabled
         aws_security_enabled_regions = []
         security_hub_regions = (
@@ -260,22 +261,25 @@ def prowler():
             security_hub_findings_per_region, audit_info.audit_session
         )
 
-        print(
-            f"{Style.BRIGHT}{Fore.GREEN}\n{findings_sent_to_security_hub} findings sent to AWS Security Hub!{Style.RESET_ALL}"
-        )
+        if not args.only_logs:
+            print(
+                f"{Style.BRIGHT}{Fore.GREEN}\n{findings_sent_to_security_hub} findings sent to AWS Security Hub!{Style.RESET_ALL}"
+            )
 
         # Resolve previous fails of Security Hub
         if not args.skip_sh_update:
-            print(
-                f"{Style.BRIGHT}\nArchiving previous findings in AWS Security Hub, please wait...{Style.RESET_ALL}"
-            )
+            if not args.only_logs:
+                print(
+                    f"{Style.BRIGHT}\nArchiving previous findings in AWS Security Hub, please wait...{Style.RESET_ALL}"
+                )
             findings_archived_in_security_hub = resolve_security_hub_previous_findings(
                 security_hub_findings_per_region,
                 audit_info,
             )
-            print(
-                f"{Style.BRIGHT}{Fore.GREEN}\n{findings_archived_in_security_hub} findings archived in AWS Security Hub!{Style.RESET_ALL}"
-            )
+            if not args.only_logs:
+                print(
+                    f"{Style.BRIGHT}{Fore.GREEN}\n{findings_archived_in_security_hub} findings archived in AWS Security Hub!{Style.RESET_ALL}"
+                )
 
     # Display summary table
     if not args.only_logs:
